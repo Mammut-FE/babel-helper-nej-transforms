@@ -1,0 +1,36 @@
+{
+    "name": "babel-helper-nej-transforms",
+    "version": "0.0.1",
+    "description": "",
+    "main": "lib/index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "tsc -p src",
+        "clean": "rimraf lib",
+        "release": "npm run clean & npm run build & npm publish"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/lleohao/babel-helper-nej-transforms.git"
+    },
+    "keywords": [
+        "babel",
+        "nej"
+    ],
+    "author": "lleohao <lleohao@hotmail.com>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/lleohao/babel-helper-nej-transforms/issues"
+    },
+    "homepage": "https://github.com/lleohao/babel-helper-nej-transforms#readme",
+    "dependencies": {
+        "babel-types": "^6.26.0",
+        "nejm": "^0.3.1"
+    },
+    "devDependencies": {
+        "@types/babel-core": "^6.25.3",
+        "@types/node": "^8.0.49",
+        "rimraf": "^2.6.2",
+        "typescript": "^2.6.1"
+    }
+}
