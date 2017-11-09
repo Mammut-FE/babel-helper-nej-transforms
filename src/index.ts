@@ -53,7 +53,7 @@ const analyisDeps = (source: string): Dependence => {
  *
  * @param path
  */
-export function fetchNEJdependences(path: NodePath) {
+export default function (path: NodePath) {
     let fnBody;
     const deps: Dependence[] = [];
 

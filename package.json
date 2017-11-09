@@ -1,6 +1,6 @@
 {
     "name": "babel-helper-nej-transforms",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "babel helper nej transforms",
     "main": "lib/index.js",
     "scripts": {
