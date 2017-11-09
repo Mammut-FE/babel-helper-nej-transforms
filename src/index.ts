@@ -7,7 +7,6 @@ export interface Dependence {
     name?: string;
     isNej: boolean;
     isText: boolean;
-    moduleName?: string;
     nejmName?: string;
 }
 
@@ -19,7 +18,50 @@ export interface NEJDependence {
     fnBody: any;
 }
 
+export interface Options {
+    /**
+     * 移除文本文件前面的标志(text! regular! json!)
+     * 
+     * @default true
+     */
+    replaceTextModule?: boolean;
+    /**
+     * 为了能够将源码存放在现有的项目文件夹, 同时又需要使用 .js 后缀而做的妥协
+     * @example
+     * extName: '.es6'
+     * inFileName: store.js
+     * outFileName: store.es6.js
+     */
+    extName?: string;
+    /**
+     * 处理nej的依赖管理, 转换成 es6 的模块管理
+     * 详细信息: https://medium.com/@davidjwoody/how-to-use-absolute-paths-in-react-native-6b06ae3f65d1
+     * 
+     * 转换成如下的方式进行模块的导入
+     * import Thing from ‘AwesomeApp/app/some/thing’
+     * create 'AwesomeApp/app/package.json' ==> { “name”: “app” } (注意name的值需要和文件夹的名称相同)
+     * import Thing from ‘app/some/thing’
+     * 
+     * @example
+     * alias = {
+     *     '{pro}lib': 'lib',
+     *     '{common}': 'common/'
+     * }
+     * 
+     * {pro}lib/redux/redux.js ==> lib/redux/redux
+     * /pro/lib/redux/redux    ==> lib/redux/redux
+     * {common}tree/tree.js    ==> common/tree/tree
+     * /common/tree/tree.js    ==> common/tree/tree
+     */
+    alias?: { [key: string]: string }
+}
+
 const textDeps = /^text!|^regular!|^json!/i;
+const defaultOptions: Options = {
+    replaceTextModule: true,
+    extName: '',
+    alias: {}
+}
 
 /**
  * 分析nej模块的依赖
@@ -38,25 +80,27 @@ const analyisDeps = (source: string): Dependence => {
     const isNej = nejmName !== undefined;
     const isText = textDeps.test(source);
 
-    const moduleNameRe = /^{(.*?)}/;
-    let moduleName = '';
-
-    if (!(isNej || isText) && (source.startsWith('{') || !source.endsWith('.js'))) { // 导入nej路径配置的文件
-        const result = source.match(moduleNameRe);
-        if (result) {
-            moduleName = result[1];
-        } else {
-            moduleName = source.split('/')[0];
-        }
-    }
-
     return {
         source,
         isNej,
         isText,
-        moduleName,
         nejmName
     }
+};
+
+/**
+ * 根据 alias 生成对应的正则表达式
+ * @param alias 
+ */
+const genAliasRe = (alias: { [key: string]: string }): RegExp => {
+    const excape = /(\/|{|})/g;
+    const reStr = [];
+
+    for (const key in alias) {
+        reStr.push(`^${key.replace(excape, '\\' + '$1')}`);
+    }
+
+    return new RegExp(reStr.join('|'));
 };
 
 /**
@@ -64,13 +108,17 @@ const analyisDeps = (source: string): Dependence => {
  *
  * @param path
  */
-export default function (path: NodePath): NEJDependence {
+export default function (path: NodePath, options: Options = {}): NEJDependence {
+    options = Object.assign(defaultOptions, options);
+
     let fnBody;
     const deps: Dependence[] = [];
 
     const custormModule: Dependence[] = [];
     const textModule: Dependence[] = [];
     const nejModule: Dependence[] = [];
+
+    const aliasRe = genAliasRe(options.alias);
 
     const visitor = {
         CallExpression: ({ node }) => {
@@ -95,12 +143,24 @@ export default function (path: NodePath): NEJDependence {
         if (dep.isNej) {
             nejModule.push(dep);
         } else if (dep.isText) {
+            if (options.replaceTextModule) { // 判断是否需要清除文本标志
+                dep.source = dep.source.replace(textDeps, '');
+            }
+
             textModule.push(dep);
         } else {
+            const result = dep.source.match(aliasRe); // 处理nej alias
+
+            if (result) {
+                dep.source = dep.source.replace(result[0], options.alias[result[0]]);
+            }
+
+            // 处理尾缀
+            dep.source = dep.source.replace(/\.js/, options.extName);
+
             custormModule.push(dep);
         }
-    })
-
+    });
 
     return {
         custormModule,
