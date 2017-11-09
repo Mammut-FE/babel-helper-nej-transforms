@@ -8,6 +8,15 @@ export interface Dependence {
     isNej: boolean;
     isText: boolean;
     moduleName?: string;
+    nejmName?: string;
+}
+
+export interface NEJDependence {
+    custormModule: Dependence[];
+    textModule: Dependence[];
+    nejModule: Dependence[];
+    rawDeps: Dependence[];
+    fnBody: any;
 }
 
 const textDeps = /^text!|^regular!|^json!/i;
@@ -25,7 +34,8 @@ const textDeps = /^text!|^regular!|^json!/i;
  * 4.
  */
 const analyisDeps = (source: string): Dependence => {
-    const isNej = nejmMap[source] !== undefined;
+    const nejmName = nejmMap[source];
+    const isNej = nejmName !== undefined;
     const isText = textDeps.test(source);
 
     const moduleNameRe = /^{(.*?)}/;
@@ -44,7 +54,8 @@ const analyisDeps = (source: string): Dependence => {
         source,
         isNej,
         isText,
-        moduleName
+        moduleName,
+        nejmName
     }
 };
 
@@ -53,7 +64,7 @@ const analyisDeps = (source: string): Dependence => {
  *
  * @param path
  */
-export default function (path: NodePath) {
+export default function (path: NodePath): NEJDependence {
     let fnBody;
     const deps: Dependence[] = [];
 
