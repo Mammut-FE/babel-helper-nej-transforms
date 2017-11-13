@@ -111,17 +111,23 @@ export default function (path: NodePath, options: Options = {}): NEJDependence {
     const visitor = {
         CallExpression: ({ node }) => {
             if (node.callee.name === 'define') {
-                node.arguments[0].elements.forEach(({ value }) => {
+                let [depsArray, fnExpression] = node.arguments;
+
+                if (types.isFunctionExpression(depsArray)) {
+                    fnExpression = depsArray;
+                    depsArray = {
+                        elements: []
+                    }
+                }
+                depsArray.elements.forEach(({ value }) => {
                     deps.push(analyisDeps(value));
                 });
 
-                if (types.isFunctionExpression(node.arguments[1])) {
-                    fnBody = node.arguments[1].body.body;
+                fnBody = fnExpression.body.body;
 
-                    node.arguments[1].params.forEach((param, i) => {
-                        deps[i]['name'] = param.name;
-                    });
-                }
+                fnExpression.params.forEach((param, i) => {
+                    deps[i]['name'] = param.name;
+                });
             }
         }
     };
