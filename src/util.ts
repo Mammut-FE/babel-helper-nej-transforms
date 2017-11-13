@@ -1,4 +1,4 @@
-export const TEXT_DEPS = /^text!|^regular!|^json!/i;
+export const TEXT_DEPS = /^text!|^regular!|^json!|\.html$|\.css$|\.json$/i;
 
 /**
  * 转义特殊字符
