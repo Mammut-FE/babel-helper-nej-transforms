@@ -8,7 +8,7 @@ import { NodePath, Node } from 'babel-traverse';
 
 
 export interface Dependence {
-    source: string;
+    source?: string;
     name?: string;
     isNej: boolean;
     isText: boolean;
@@ -19,6 +19,7 @@ export interface NEJDependence {
     custormModule: Dependence[];
     textModule: Dependence[];
     nejModule: Dependence[];
+    nejInject: string[];
     rawDeps: Dependence[];
     fnBody: Node[];
 }
@@ -105,6 +106,7 @@ export default function (path: NodePath, options: Options = {}): NEJDependence {
     const custormModule: Dependence[] = [];
     const textModule: Dependence[] = [];
     const nejModule: Dependence[] = [];
+    const nejInject: string[] = [];
 
     const aliasRe = genAliasRe(options.alias);
 
@@ -126,7 +128,11 @@ export default function (path: NodePath, options: Options = {}): NEJDependence {
                 fnBody = fnExpression.body.body;
 
                 fnExpression.params.forEach((param, i) => {
-                    deps[i]['name'] = param.name;
+                    if (deps[i]) {
+                        deps[i]['name'] = param.name;
+                    } else {
+                        nejInject.push(param.name);
+                    }
                 });
             }
         }
@@ -160,6 +166,7 @@ export default function (path: NodePath, options: Options = {}): NEJDependence {
         custormModule,
         textModule,
         nejModule,
+        nejInject,
         rawDeps: deps,
         fnBody
     }
