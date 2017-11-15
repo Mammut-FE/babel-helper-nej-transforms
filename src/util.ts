@@ -17,7 +17,7 @@ export const genAliasRe = (alias: { [key: string]: string }): RegExp => {
     const reStr = [];
 
     for (const key in alias) {
-        reStr.push(`^${escape(key)}`);
+        reStr.push(`^${escape(key)}\\b`);
     }
 
     return new RegExp(reStr.join('|'));
