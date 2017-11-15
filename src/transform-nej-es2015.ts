@@ -40,7 +40,7 @@ export interface Options {
      */
     extName?: string;
     /**
-     * 处理nej的依赖管理, 转换成 es6 的模块管理
+     * 处理nej的自定义路径, 转换成 es6 的模块管理
      * 详细信息: https://medium.com/@davidjwoody/how-to-use-absolute-paths-in-react-native-6b06ae3f65d1
      * 
      * 转换成如下的方式进行模块的导入

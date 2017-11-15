@@ -11,7 +11,24 @@ export interface NEJDefine {
 }
 
 export interface Options {
+    /**
+     * 为了能够将源码存放在现有的项目文件夹, 同时又需要使用 .js 后缀而做的妥协
+     * @example
+     * extName: '.es6'
+     * inFileName: store.es6.js
+     * outFileName: store.js
+     */
     extName?: string;
+    /**
+     * 处理nej的自定义路径, 转换成 es6 的模块管理
+     * 
+     * @example
+     * alias = {
+     *     'lib': 'pro/lib',
+     * }
+     * 
+     * lib/redux/redux         ==> pro/lib/redux/redux
+     */
     alias?: { [key: string]: string };
 }
 
