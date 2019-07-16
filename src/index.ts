@@ -1,8 +1,10 @@
-export *  from './nej-parser';
-export * from './transform-nej-dep-path';
-export * from './transform-this-to-window';
-export * from './transform-return-to-export';
+export { nejModuleParser }  from './nej-module-parser';
+export { transformNejDepPath } from './transform-nej-dep-path';
+export { transformThis2Window } from './transform-this-to-window';
+export { transformReturnToExport } from './transform-return-to-export';
 
-export * from './interfaces/dependence-info.interface';
-export * from './interfaces/nej-inject.interface';
-export * from './interfaces/nej-meta.interface';
+export { DependenceInfo } from './interfaces/dependence-info.interface';
+export { NejInject } from './interfaces/nej-inject.interface';
+export { NejMeta } from './interfaces/nej-meta.interface';
+
+export { NejInjectType } from './enums/nej-inject-type.enum';

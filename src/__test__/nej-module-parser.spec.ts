@@ -1,7 +1,7 @@
 import * as parser from '@babel/parser';
 import traverse from '@babel/traverse';
 import { ReturnStatement, VariableDeclaration } from '@babel/types';
-import { NejInjectType, NejMeta, nejParser } from '..';
+import { NejInjectType, NejMeta, nejModuleParser } from '..';
 
 export function getNejParseResult(code): Promise<NejMeta> {
     return new Promise(resolve => {
@@ -9,7 +9,7 @@ export function getNejParseResult(code): Promise<NejMeta> {
 
         traverse(ast, {
             enter: (path) => {
-                resolve(nejParser(path));
+                resolve(nejModuleParser(path));
             }
         });
     });
@@ -17,7 +17,7 @@ export function getNejParseResult(code): Promise<NejMeta> {
 
 describe('nejParser', () => {
     it('nejParser is function', () => {
-        expect(nejParser).toBeInstanceOf(Function);
+        expect(nejModuleParser).toBeInstanceOf(Function);
     });
 
     it('解析非 js 文件时, 返回 {fnBody: undefined, dependence: [], nejInject: []}', async () => {

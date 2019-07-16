@@ -1,7 +1,6 @@
 /**
  * nej module 文件解析
  * 返回文件中的 依赖信息、nej注入和函数主体
- * @author lleohao<lleohao@hotmail.com>
  */
 import { NodePath, Visitor } from '@babel/traverse';
 import * as types from '@babel/types';
@@ -13,11 +12,12 @@ import {
     Statement,
     StringLiteral
 } from '@babel/types';
+import { NejInjectType } from './enums/nej-inject-type.enum';
 import { DependenceInfo } from './interfaces/dependence-info.interface';
-import { NejInject, NejInjectType } from './interfaces/nej-inject.interface';
+import { NejInject } from './interfaces/nej-inject.interface';
 import { NejMeta } from './interfaces/nej-meta.interface';
 
-export function nejParser(path: NodePath): NejMeta {
+export function nejModuleParser(path: NodePath): NejMeta {
     let fnBody: Statement[];
     let dependence: DependenceInfo[] = [];
     let nejInject: NejInject[] = [];
