@@ -60,3 +60,4 @@ typings/
 lib
 example
 .vscode
+.idea
