@@ -1,5 +1,5 @@
 /**
- * nej module 文件解析
+ * 对采用 nej 规范编写的 js 文件进行解析
  * 返回文件中的 依赖信息、nej注入和函数主体
  */
 import { NodePath, Visitor } from '@babel/traverse';
@@ -12,14 +12,17 @@ import {
     Statement,
     StringLiteral
 } from '@babel/types';
+
+import { Options } from '../options.interface';
 import { NejInjectType } from './enums/nej-inject-type.enum';
-import { DependenceInfo } from './interfaces/dependence-info.interface';
+import { Dependence } from './interfaces/dependence.interface';
 import { NejInject } from './interfaces/nej-inject.interface';
 import { NejMeta } from './interfaces/nej-meta.interface';
+import { analyzeDependence, checkIsDefineFunction } from './parser.util';
 
-export function nejModuleParser(path: NodePath): NejMeta {
+export function nejCodeParser(path: NodePath, options: Options): NejMeta {
     let fnBody: Statement[];
-    let dependence: DependenceInfo[] = [];
+    let dependencies: Dependence[] = [];
     let nejInject: NejInject[] = [];
 
     const nejInjectType = [
@@ -33,13 +36,7 @@ export function nejModuleParser(path: NodePath): NejMeta {
         CallExpression: (path: NodePath<CallExpression>) => {
             const {node} = path;
 
-            if (types.isIdentifier(node.callee) && node.callee.name === 'define'
-                || (
-                    types.isMemberExpression(node.callee)
-                    && (types.isIdentifier(node.callee.object) && node.callee.object.name === 'NEJ')
-                    && (types.isIdentifier(node.callee.property) && node.callee.property.name === 'define')
-                )
-            ) {
+            if (checkIsDefineFunction(path)) {
                 let [depArguments, funExpression] = node.arguments as [ArrayExpression, FunctionExpression];
 
                 if (types.isFunctionExpression(depArguments)) {
@@ -50,13 +47,10 @@ export function nejModuleParser(path: NodePath): NejMeta {
                 const deps: string[] = depArguments.elements.map((argument: StringLiteral) => argument.value);
                 const depLength = deps.length;
 
-                fnBody = funExpression.body.body;
+                // 解析依赖和 nej 注入变量
                 funExpression.params.map((param: Identifier, index) => {
                     if (index < depLength) {
-                        dependence.push({
-                            dep: deps[index],
-                            alias: param.name
-                        });
+                        dependencies.push(analyzeDependence(deps[index], param.name, options));
                     } else {
                         nejInject.push({
                             type: nejInjectType[index - depLength],
@@ -64,6 +58,9 @@ export function nejModuleParser(path: NodePath): NejMeta {
                         });
                     }
                 });
+
+                // 解析函数主体
+                fnBody = funExpression.body.body;
             }
         }
     };
@@ -72,7 +69,7 @@ export function nejModuleParser(path: NodePath): NejMeta {
 
     return {
         fnBody,
-        dependence,
+        dependencies,
         nejInject
     };
 }

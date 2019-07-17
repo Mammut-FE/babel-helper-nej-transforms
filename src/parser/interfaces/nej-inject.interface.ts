@@ -1,4 +1,4 @@
-import { NejInjectType } from '..';
+import { NejInjectType } from '../enums/nej-inject-type.enum';
 
 export interface NejInject {
     alias: string;
