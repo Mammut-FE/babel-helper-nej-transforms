@@ -1,8 +1,10 @@
+import generator from '@babel/generator';
 import * as parser from '@babel/parser';
+import traverse from '@babel/traverse';
+import { Statement } from '@babel/types';
 import { Options } from './options.interface';
 import { NejMeta } from './parser/interfaces/nej-meta.interface';
 import { nejCodeParser } from './parser/nej-code-parser';
-import traverse from '@babel/traverse';
 
 export function getNejParseResult(code): Promise<NejMeta> {
     return new Promise(resolve => {
@@ -18,6 +20,12 @@ export function getNejParseResult(code): Promise<NejMeta> {
             }
         });
     });
+}
+
+export function generatorCode(statements: Statement[]): string {
+    const ast = parser.parse('');
+    ast.program.body = statements;
+    return generator(ast).code;
 }
 
 export function expectCodeEqual(expected: string, received: string) {
