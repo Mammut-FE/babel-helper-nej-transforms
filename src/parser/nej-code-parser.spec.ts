@@ -1,26 +1,8 @@
-import * as parser from '@babel/parser';
-import traverse from '@babel/traverse';
 import { ReturnStatement, VariableDeclaration } from '@babel/types';
-import { Options } from '../options.interface';
+import { getNejParseResult } from '../test.util';
 import { NejInjectType } from './enums/nej-inject-type.enum';
-import { NejMeta } from './interfaces/nej-meta.interface';
 import { nejCodeParser } from './nej-code-parser';
 
-export function getNejParseResult(code): Promise<NejMeta> {
-    return new Promise(resolve => {
-        const ast = parser.parse(code);
-        const options: Options = {
-            alias: {},
-            isNejCode: true
-        };
-
-        traverse(ast, {
-            enter: (path) => {
-                resolve(nejCodeParser(path, options));
-            }
-        });
-    });
-}
 
 describe('nejParser', () => {
     it('nejParser is function', () => {
