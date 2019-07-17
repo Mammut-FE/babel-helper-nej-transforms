@@ -1,6 +1,6 @@
 import * as types from '@babel/types';
 import { ReturnStatement, Statement } from '@babel/types';
-import { NejInject } from './interfaces/nej-inject.interface';
+import { NejInject } from '../parser/interfaces/nej-inject.interface';
 
 
 export function transformReturnToExport(fnBody: Statement[], nejInject: NejInject[]) {

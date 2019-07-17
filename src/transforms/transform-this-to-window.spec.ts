@@ -1,13 +1,8 @@
 import generator from '@babel/generator';
 import * as parser from '@babel/parser';
-import { transformThis2Window } from '../transform-this-to-window';
+import { expectCodeEqual } from '../test.util';
 
-export function expectCodeEqual(expected: string, received: string) {
-    expected = expected.trim().split('\n').map(line => line.trim()).filter(line => line.trim()).join('\n');
-    received = received.trim().split('\n').map(line => line.trim()).filter(line => line.trim()).join('\n');
-
-    expect(expected).toEqual(received);
-}
+import { transformThis2Window } from './transform-this-to-window';
 
 describe('transformThis2Window', () => {
     it('nejParser is function', () => {

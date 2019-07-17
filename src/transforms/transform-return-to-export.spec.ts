@@ -1,7 +1,7 @@
 import * as types from '@babel/types';
 import { ExportDefaultDeclaration, Identifier } from '@babel/types';
-import { transformReturnToExport } from '../transform-return-to-export';
-import { getNejParseResult } from './nej-module-parser.spec';
+import { getNejParseResult } from '../test.util';
+import { transformReturnToExport } from './transform-return-to-export';
 
 describe('transformReturnToExport', () => {
     it('transformReturnToExport is Function', () => {
