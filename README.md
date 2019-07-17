@@ -15,3 +15,11 @@ nej babel 插件辅助函数
 ### transform-return-to-export.ts 
 
 用于将 return 的值通过 export default 导出
+
+### generator-nej-dependencies.ts
+
+将依赖信息转换成 ES6 代码
+
+### generator-nej-injects.ts
+
+将NEJ注入变量转换成 ES6 代码
