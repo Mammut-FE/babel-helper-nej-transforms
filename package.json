@@ -7,7 +7,7 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "jest",
-    "build": "tsc -p src",
+    "build": "tsc -p src/tsconfig.dev.json",
     "clean": "rm -rf lib",
     "prepublish": "npm run clean & npm run build"
   },
