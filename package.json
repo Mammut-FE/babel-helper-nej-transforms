@@ -8,8 +8,7 @@
   "scripts": {
     "test": "jest",
     "build": "tsc -p src/tsconfig.dev.json",
-    "clean": "rm -rf lib",
-    "prepublish": "npm run clean & npm run build"
+    "clean": "rm -rf lib"
   },
   "repository": {
     "type": "git",
