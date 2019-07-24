@@ -1,5 +1,7 @@
 # babel-helper-nej-transforms
 
+[![Build Status](https://travis-ci.com/Mammut-FE/babel-helper-nej-transforms.svg?branch=master)](https://travis-ci.com/Mammut-FE/babel-helper-nej-transforms)
+
 nej babel 插件辅助函数
 
 ## API
