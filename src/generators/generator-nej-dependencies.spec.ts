@@ -19,10 +19,10 @@ describe('generatorNejInjects', () => {
 
         expectCodeEqual(generatorCode(generatorNejDependencies(dependencies)), `
             import util from "./base/util";
-            import * as style from "./styles/style.css";
-            import * as template from "./template/template.html";
-            import * as template1 from "./template/template1.html";
-            import * as result from "./data/result.json";
+            import style from "./styles/style.css";
+            import template from "./template/template.html";
+            import template1 from "./template/template1.html";
+            import result from "./data/result.json";
         `);
     });
 });
