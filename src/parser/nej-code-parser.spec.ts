@@ -9,7 +9,7 @@ describe('nejParser', () => {
         expect(nejCodeParser).toBeInstanceOf(Function);
     });
 
-    it('解析非 js 文件时, 返回 {fnBody: undefined, dependence: [], nejInject: []}', async () => {
+    it('解析非法文件时, 返回 {fnBody: undefined, dependence: [], nejInject: []}', async () => {
         await expect(getNejParseResult(`111111`)).resolves.toEqual({
             fnBody: undefined,
             dependencies: [],
@@ -147,4 +147,39 @@ describe('nejParser', () => {
             }
         ]);
     });
+
+    it('支持解析只导入的文件', async () => {
+        const code = `
+            define(['text!./template.html', 'text!./style.css', 'regular!./tpl.html', 'json!./tpl.json'], function(t1) {
+                var _p = {};
+                
+                return _p;
+            })
+        `;
+        const {dependencies} = await getNejParseResult(code);
+
+        expect(dependencies).toEqual([
+            {
+                'moduleType': 'text',
+                'name': 't1',
+                'rawSource': 'text!./template.html',
+                'source': './template.html'
+            },
+            {
+                'moduleType': 'text',
+                'rawSource': 'text!./style.css',
+                'source': './style.css'
+            },
+            {
+                'moduleType': 'regular',
+                'rawSource': 'regular!./tpl.html',
+                'source': './tpl.html'
+            },
+            {
+                'moduleType': 'json',
+                'rawSource': 'json!./tpl.json',
+                'source': './tpl.json'
+            }
+        ]);
+    })
 });

@@ -48,7 +48,7 @@ export function nejCodeParser(path: NodePath, options: Options): NejMeta {
                 const depLength = deps.length;
 
                 // 解析依赖和 nej 注入变量
-                funExpression.params.map((param: Identifier, index) => {
+                funExpression.params.forEach((param: Identifier, index) => {
                     if (index < depLength) {
                         dependencies.push(analyzeDependence(deps[index], param.name, options));
                     } else {
@@ -57,6 +57,11 @@ export function nejCodeParser(path: NodePath, options: Options): NejMeta {
                             alias: param.name
                         });
                     }
+                });
+
+                // 解析只导入未引用的依赖
+                deps.slice(funExpression.params.length).forEach(dep => {
+                    dependencies.push(analyzeDependence(dep, undefined, options));
                 });
 
                 // 解析函数主体

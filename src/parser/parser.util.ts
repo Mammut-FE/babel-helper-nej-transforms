@@ -90,7 +90,6 @@ export function analyzeDependence(rawSource: string, name: string, options: Opti
 
     source = normalize(source, options);
 
-
     return {
         source,
         name,
