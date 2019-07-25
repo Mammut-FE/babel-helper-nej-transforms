@@ -32,6 +32,11 @@ export function nejCodeParser(path: NodePath, options: Options): NejMeta {
         NejInjectType.array
     ];
 
+    options = Object.assign({
+        alias: {},
+        isNejCode: false
+    }, options);
+
     const visitor: Visitor = {
         CallExpression: (path: NodePath<CallExpression>) => {
             const {node} = path;
