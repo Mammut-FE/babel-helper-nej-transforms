@@ -33,7 +33,7 @@ describe('transformReturnToModuleExports', () => {
 
         expectCodeEqual(generatorCode(fnBody), `
             var a = '1';
-            module.exports = _p
+            module.exports = _p;
         `);
     });
 });
