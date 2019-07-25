@@ -3,8 +3,8 @@ import { expectCodeEqual, generatorCode } from '../test.util';
 import { generatorNejDependenciesAsCommonjs } from './generator-nej-dependencies-as-commonjs';
 
 
-describe('generatorNejInjects', () => {
-    it('generatorNejInjects is function', () => {
+describe('generatorNejDependenciesAsCommonjs', () => {
+    it('generatorNejDependenciesAsCommonjs is function', () => {
         expect(generatorNejDependenciesAsCommonjs).toBeInstanceOf(Function);
     });
 
