@@ -10,7 +10,8 @@ import {
     FunctionExpression,
     Identifier,
     Statement,
-    StringLiteral
+    StringLiteral,
+    VariableDeclarator
 } from '@babel/types';
 
 import { Options } from '../options.interface';
@@ -20,7 +21,7 @@ import { NejInject } from './interfaces/nej-inject.interface';
 import { NejMeta } from './interfaces/nej-meta.interface';
 import { analyzeDependence, checkIsDefineFunction } from './parser.util';
 
-export function nejCodeParser(path: NodePath, options: Options): NejMeta {
+export function nejCodeParser(proPath: NodePath, options: Options): NejMeta {
     let fnBody: Statement[];
     let dependencies: Dependence[] = [];
     let nejInject: NejInject[] = [];
@@ -49,6 +50,19 @@ export function nejCodeParser(path: NodePath, options: Options): NejMeta {
                     depArguments = types.arrayExpression([]);
                 }
 
+                if (types.isIdentifier(funExpression) && types.isProgram(proPath.node)) {
+                    const functionName: string = funExpression.name;
+                    const varDeclarations: Statement[] = proPath.node.body.filter(node => types.isVariableDeclaration(node));
+                    for (let i = 0; i < varDeclarations.length; i++) {
+                        const dec = varDeclarations[i];
+                        if (types.isVariableDeclaration(dec)) {
+                            const varDeclarator: VariableDeclarator = dec.declarations.find(node => (types.isIdentifier(node.id) && node.id.name === functionName));
+                            funExpression = (types.isFunctionExpression(varDeclarator.init) && varDeclarator.init) || funExpression;
+                            break;
+                        }
+                    }
+                }
+
                 const deps: string[] = depArguments.elements.map((argument: StringLiteral) => argument.value);
                 const depLength = deps.length;
 
@@ -75,7 +89,7 @@ export function nejCodeParser(path: NodePath, options: Options): NejMeta {
         }
     };
 
-    path.traverse(visitor);
+    proPath.traverse(visitor);
 
     return {
         fnBody,
